@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fastly Chat Demo</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen">
+        <div class="login-card">
+            <div class="logo">
+                <span class="logo-icon">⚡</span>
+                <h1>Fastly Chat</h1>
+                <p class="subtitle">Real-time messaging powered by Fastly</p>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Enter your name" maxlength="32" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label for="room">Room</label>
+                    <input type="text" id="room" placeholder="general" maxlength="64" autocomplete="off">
+                    <small>Leave empty for #general</small>
+                </div>
+                <button type="submit" class="btn-primary">Join Chat</button>
+            </form>
+            <div class="login-footer">
+                <span class="fanout-badge" id="fanout-badge">Local Mode</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen hidden">
+        <div class="chat-container">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <span class="logo-icon-sm">⚡</span>
+                    <h2>Fastly Chat</h2>
+                </div>
+                <div class="room-info">
+                    <div class="current-room">
+                        <span class="room-label">ROOM</span>
+                        <h3 id="current-room-name">#general</h3>
+                    </div>
+                    <div class="user-count">
+                        <span class="dot-online"></span>
+                        <span id="user-count">0 online</span>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <h4>Active Rooms</h4>
+                    <ul id="room-list" class="room-list"></ul>
+                </div>
+                <div class="sidebar-footer">
+                    <div class="connection-status">
+                        <span class="dot" id="connection-dot"></span>
+                        <span id="connection-text">Connecting...</span>
+                    </div>
+                    <button id="leave-btn" class="btn-leave">Leave Room</button>
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <main class="chat-main">
+                <header class="chat-header">
+                    <div class="chat-header-left">
+                        <button id="sidebar-toggle" class="btn-icon">☰</button>
+                        <h3 id="header-room-name">#general</h3>
+                    </div>
+                    <div class="chat-header-right">
+                        <span id="header-user-count">0 online</span>
+                    </div>
+                </header>
+
+                <div id="messages" class="messages">
+                    <div class="welcome-message">
+                        <p>👋 Welcome to <strong>#general</strong>!</p>
+                        <p>Messages are delivered in real-time via WebSocket.</p>
+                    </div>
+                </div>
+
+                <footer class="chat-input">
+                    <form id="message-form">
+                        <input type="text" id="message-input" placeholder="Type a message..." maxlength="2000" autocomplete="off">
+                        <button type="submit" class="btn-send" title="Send">➤</button>
+                    </form>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>
