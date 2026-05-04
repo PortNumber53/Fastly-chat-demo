@@ -1,34 +1,17 @@
-.PHONY: build run test clean docker
+.PHONY: build test clean deploy
 
-# Build the binary
+# Build the Wasm binary with TinyGo
 build:
-	go build -o chat-demo .
+	tinygo build -target=wasi -gc=conservative -o bin/main.wasm .
 
-# Run in development mode
-run: build
-	./chat-demo
-
-# Run with Fanout enabled (requires env vars)
-run-fanout: build
-	FASTLY_FANOUT_ENABLED=true ./chat-demo
-
-# Run tests
+# Run tests (skip Fastly host calls)
 test:
-	go test ./...
-
-# Format and lint
-lint:
-	go fmt ./...
-	go vet ./...
+	go test -tags nofastlyhostcalls ./...
 
 # Clean build artifacts
 clean:
-	rm -f chat-demo
+	rm -f bin/main.wasm
 
-# Docker build and run
-docker:
-	docker compose up --build
-
-# Docker build only
-docker-build:
-	docker build -t fastly-chat-demo .
+# Deploy to Fastly Compute@Edge
+deploy:
+	fastly compute publish
