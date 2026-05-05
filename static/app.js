@@ -83,6 +83,15 @@
             reconnectAttempts = 0;
             updateConnectionStatus('connected');
             addSystemMessage('Connected to chat server');
+            // Fetch room history
+            fetch(`/api/rooms/${encodeURIComponent(currentRoom)}?limit=50`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success && data.data && data.data.messages) {
+                        data.data.messages.forEach(msg => handleMessage(msg));
+                    }
+                })
+                .catch(() => {});
         };
 
         ws.onmessage = function (event) {
@@ -135,9 +144,17 @@
             content: text,
         };
 
-        ws.send(JSON.stringify(msg));
-        messageInput.value = '';
-        messageInput.focus();
+        fetch(`/api/rooms/${encodeURIComponent(currentRoom)}?username=${encodeURIComponent(currentUser)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(msg)
+        }).then(() => {
+            messageInput.value = '';
+            messageInput.focus();
+        }).catch(err => {
+            console.error('Failed to send message:', err);
+            addSystemMessage('Failed to send message');
+        });
     });
 
     function handleMessage(msg) {
@@ -308,7 +325,10 @@
         fetch('/api/health')
             .then(r => r.json())
             .then(data => {
-                if (data.version) {
+                if (data.mode === 'fastly-compute') {
+                    fanoutBadge.textContent = 'Fastly Fanout';
+                    fanoutBadge.classList.add('active');
+                } else {
                     fanoutBadge.textContent = 'Local Mode';
                     fanoutBadge.classList.remove('active');
                 }

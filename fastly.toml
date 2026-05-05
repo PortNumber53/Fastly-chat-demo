@@ -1,21 +1,24 @@
 # Fastly Compute@Edge Package Configuration
 # This file configures the project for deployment to Fastly Compute@Edge
-# with Fanout for real-time message delivery
+# with Fanout for real-time message delivery.
 
 manifest_version = 2
 name = "fastly-chat-demo"
 language = "go"
 
+[scripts]
+  build = "tinygo build -target=wasi -gc=conservative -o bin/main.wasm ."
+
+[local_server]
+  [local_server.kv_stores]
+    [[local_server.kv_stores.chat_state]]
+  [local_server.log_endpoints]
+    [[local_server.log_endpoints.fanout]]
+
 [setup]
-  [setup.backends]
-    [setup.backends.chat_server]
-      address = "127.0.0.1:8080"
-      port = 8080
-
-  [setup.dictionaries]
-    [setup.dictionaries.config]
-      description = "Chat demo configuration"
-
+  [setup.kv_stores]
+    [[setup.kv_stores.chat_state]]
+      description = "Chat room state and message history"
   [setup.log_endpoints]
-    [setup.log_endpoints.fanout]
+    [[setup.log_endpoints.fanout]]
       name = "fanout"
