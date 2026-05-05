@@ -6,8 +6,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/fastly/compute-sdk-go/kvstore"
 	"github.com/PortNumber53/Fastly-chat-demo/internal/models"
+	"github.com/fastly/compute-sdk-go/kvstore"
 )
 
 const maxMessagesPerRoom = 100
@@ -93,7 +93,7 @@ func (s *State) AddRoom(roomID string) error {
 	return s.store.Insert("rooms", strings.NewReader(string(data)))
 }
 
-// GetRooms returns a list of known rooms.
+// GetRooms returns a list of known rooms with message counts from KV.
 func (s *State) GetRooms() ([]models.RoomInfo, error) {
 	roomIDs, err := s.getRoomList()
 	if err != nil {
@@ -101,10 +101,10 @@ func (s *State) GetRooms() ([]models.RoomInfo, error) {
 	}
 	result := make([]models.RoomInfo, 0, len(roomIDs))
 	for _, id := range roomIDs {
+		history, _ := s.GetRoomHistory(id, 0)
 		result = append(result, models.RoomInfo{
-			ID:        id,
-			UserCount: 0,
-			MsgCount:  0,
+			ID:       id,
+			MsgCount: len(history),
 		})
 	}
 	return result, nil

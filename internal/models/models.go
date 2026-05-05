@@ -4,11 +4,11 @@ import "time"
 
 // Message types
 const (
-	MsgTypeChat    = "chat"
-	MsgTypeSystem  = "system"
-	MsgTypeJoin    = "join"
-	MsgTypeLeave   = "leave"
-	MsgTypeInfo    = "info"
+	MsgTypeChat   = "chat"
+	MsgTypeSystem = "system"
+	MsgTypeJoin   = "join"
+	MsgTypeLeave  = "leave"
+	MsgTypeInfo   = "info"
 )
 
 // Message represents a chat message
@@ -20,11 +20,12 @@ type Message struct {
 	Time     time.Time `json:"time"`
 }
 
-// RoomInfo represents public info about a room
+// RoomInfo represents public info about a room.
+// UserCount is not tracked in Compute@Edge and is omitted when zero.
 type RoomInfo struct {
-	ID         string `json:"id"`
-	UserCount  int    `json:"user_count"`
-	MsgCount   int    `json:"msg_count"`
+	ID        string `json:"id"`
+	UserCount int    `json:"user_count,omitempty"`
+	MsgCount  int    `json:"msg_count"`
 }
 
 // JoinRequest is the payload for joining a room

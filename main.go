@@ -153,11 +153,16 @@ func handleRoomDetail(w fsthttp.ResponseWriter, r *fsthttp.Request, st *state.St
 		}
 
 		// Ensure room is tracked
-		st.AddRoom(roomID)
+		if err := st.AddRoom(roomID); err != nil {
+			log.Printf("[State] add room error: %v", err)
+		}
 
 		// Store in KV
 		if err := st.AppendMessage(roomID, msg); err != nil {
 			log.Printf("[State] append error: %v", err)
+			w.WriteHeader(fsthttp.StatusInternalServerError)
+			fmt.Fprintf(w, `{"success":false,"error":"failed to persist message"}`)
+			return
 		}
 
 		// Publish to Fanout
